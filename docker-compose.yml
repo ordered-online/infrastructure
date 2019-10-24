@@ -49,7 +49,9 @@ services:
       - .env.locations
 
   db:
-    image: postgres
+    build:
+      context: django
+      dockerfile: Dockerfile
     networks:
       - database_network
     env_file:

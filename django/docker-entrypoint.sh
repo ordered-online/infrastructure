@@ -1,7 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 APP_DIR=$( dirname "$(find . -type f -name "requirements.txt")" )
+
+echo "${APP_DIR}"
 
 python -m pip install -r "${APP_DIR}/requirements.txt"
 
