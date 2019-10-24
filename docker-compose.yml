@@ -50,7 +50,7 @@ services:
 
   db:
     build:
-      context: django
+      context: postgres
       dockerfile: Dockerfile
     networks:
       - database_network
