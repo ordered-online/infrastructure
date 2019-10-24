@@ -1,0 +1,9 @@
+[submodule "locations"]
+	path = locations
+	url = https://github.com/ordered-online/locations.git
+[submodule "codes"]
+	path = codes
+	url = https://github.com/ordered-online/codes.git
+[submodule "verification"]
+	path = verification
+	url = https://github.com/ordered-online/verification.git
