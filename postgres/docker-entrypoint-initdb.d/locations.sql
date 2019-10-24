@@ -1,3 +1,0 @@
-CREATE USER locations;
-CREATE DATABASE locations;
-GRANT ALL PRIVILEGES ON DATABASE locations TO locations;
