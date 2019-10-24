@@ -1,12 +1,12 @@
 version: "3"
 services:
-  codes:
+  verification:
     build:
       context: django
       dockerfile: Dockerfile
-    command: gunicorn codes.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn verification.wsgi:application --chdir verification/ --bind 0.0.0.0:8000
     volumes:
-      - ./codes:/usr/src/app/
+      - ./verification:/usr/src/app/
     ports:
       - 8000:8000
     depends_on:
@@ -14,15 +14,15 @@ services:
     networks:
       - database_network
     env_file:
-      - .env.codes
+      - .env.verification
 
-  verification:
+  codes:
     build:
       context: django
       dockerfile: Dockerfile
-    command: gunicorn verification.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn codes.wsgi:application --chdir codes/ --bind 0.0.0.0:8001
     volumes:
-      - ./verification:/usr/src/app/
+      - ./codes:/usr/src/app/
     ports:
       - 8001:8001
     depends_on:
@@ -30,13 +30,13 @@ services:
     networks:
       - database_network
     env_file:
-      - .env.verification
+      - .env.codes
 
   locations:
     build:
       context: django
       dockerfile: Dockerfile
-    command: gunicorn locations.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn locations.wsgi:application --chdir locations/ --bind 0.0.0.0:8002
     volumes:
       - ./locations:/usr/src/app/
     ports:
