@@ -19,7 +19,7 @@ services:
     build:
       context: django
       dockerfile: Dockerfile
-    command: gunicorn codes.wsgi:application --chdir codes/ --bind 0.0.0.0:8001
+    command: gunicorn codes.wsgi:application --chdir codes/ --bind 0.0.0.0:8000
     volumes:
       - ./codes:/usr/src/app/
     depends_on:
@@ -34,7 +34,7 @@ services:
     build:
       context: django
       dockerfile: Dockerfile
-    command: gunicorn locations.wsgi:application --chdir locations/ --bind 0.0.0.0:8002
+    command: gunicorn locations.wsgi:application --chdir locations/ --bind 0.0.0.0:8000
     volumes:
       - ./locations:/usr/src/app/
     depends_on:
