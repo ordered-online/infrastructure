@@ -7,3 +7,6 @@
 [submodule "verification"]
 	path = verification
 	url = https://github.com/ordered-online/verification.git
+[submodule "products"]
+	path = products
+	url = https://github.com/ordered-online/products
