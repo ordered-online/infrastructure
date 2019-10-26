@@ -45,6 +45,21 @@ services:
       - environment/locations.env
       - environment/db.env
 
+  products:
+    build:
+      context: django
+      dockerfile: Dockerfile
+    command: gunicorn products.wsgi:application --chdir products/ --bind 0.0.0.0:8000
+    volumes:
+      - ./products:/usr/src/app/
+    depends_on:
+      - db
+    networks:
+      - database_network
+    env_file:
+      - environment/products.env
+      - environment/db.env
+
   db:
     build:
       context: postgres
@@ -64,6 +79,7 @@ services:
       - codes
       - locations
       - verification
+      - products
       - db
 
 networks:
