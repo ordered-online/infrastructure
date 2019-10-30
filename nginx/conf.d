@@ -1,6 +1,7 @@
+# docker will automatically resolve this to the correct address
+# because we use the same name as the service
+
 upstream verification {
-    # docker will automatically resolve this to the correct address
-    # because we use the same name as the service
     server verification:8000;
 }
 
@@ -9,7 +10,15 @@ upstream codes {
 }
 
 upstream locations {
-    server verification:8000;
+    server locations:8000;
+}
+
+upstream products {
+    server products:8000;
+}
+
+upstream orders {
+    server orders:8000;
 }
 
 server {
@@ -35,6 +44,20 @@ server {
 
     location /locations/ {
         proxy_pass https://locations/locations/;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+    }
+
+    location /products/ {
+        proxy_pass https://products/products/;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+    }
+
+    location /orders/ {
+        proxy_pass https://orders/orders/;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $host;
         proxy_redirect off;

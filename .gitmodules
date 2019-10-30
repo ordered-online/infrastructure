@@ -10,3 +10,6 @@
 [submodule "products"]
 	path = products
 	url = https://github.com/ordered-online/products
+[submodule "orders"]
+	path = orders
+	url = https://github.com/ordered-online/orders

@@ -60,6 +60,21 @@ services:
       - environment/products.env
       - environment/db.env
 
+  orders:
+    build:
+      context: django
+      dockerfile: Dockerfile
+    command: gunicorn orders.wsgi:application --chdir orders/ --bind 0.0.0.0:8000
+    volumes:
+      - ./orders:/usr/src/app/
+    depends_on:
+      - db
+    networks:
+      - database_network
+    env_file:
+      - environment/orders.env
+      - environment/db.env
+
   db:
     build:
       context: postgres

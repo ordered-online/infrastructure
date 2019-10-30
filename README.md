@@ -5,6 +5,9 @@
 - Python 3
 - Django
 - Gunicorn
+- Daphne
+- Redis
+- Postgres
 - Docker
 - NGINX
 
