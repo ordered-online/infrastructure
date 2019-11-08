@@ -96,7 +96,7 @@ services:
       context: nginx
       dockerfile: Dockerfile
     ports:
-        - 8000:80
+        - 80:80
     depends_on:
       - codes
       - locations
