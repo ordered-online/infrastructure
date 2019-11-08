@@ -1,19 +1,14 @@
 version: "3"
 services:
-  verification:
+
+  db:
     build:
-      context: django
+      context: postgres
       dockerfile: Dockerfile
-    command: gunicorn verification.wsgi:application --chdir verification/ --bind 0.0.0.0:8000
-    volumes:
-      - ./verification:/usr/src/app/
-    depends_on:
-      - db
     networks:
       - database_network
-    env_file:
-      - environment/verification.env
-      - environment/db.env
+    volumes:
+      - ./environment:/var/lib/postgres/environment:ro
 
   codes:
     build:
@@ -30,6 +25,22 @@ services:
       - environment/codes.env
       - environment/db.env
 
+  verification:
+    build:
+      context: django
+      dockerfile: Dockerfile
+    command: gunicorn verification.wsgi:application --chdir verification/ --bind 0.0.0.0:8000
+    volumes:
+      - ./verification:/usr/src/app/
+    depends_on:
+      - db
+      - codes
+    networks:
+      - database_network
+    env_file:
+      - environment/verification.env
+      - environment/db.env
+
   locations:
     build:
       context: django
@@ -39,6 +50,8 @@ services:
       - ./locations:/usr/src/app/
     depends_on:
       - db
+      - codes
+      - verification
     networks:
       - database_network
     env_file:
@@ -54,35 +67,29 @@ services:
       - ./products:/usr/src/app/
     depends_on:
       - db
+      - codes
+      - verification
+      - locations
     networks:
       - database_network
     env_file:
       - environment/products.env
       - environment/db.env
 
-  orders:
-    build:
-      context: django
-      dockerfile: Dockerfile
-    command: gunicorn orders.wsgi:application --chdir orders/ --bind 0.0.0.0:8000
-    volumes:
-      - ./orders:/usr/src/app/
-    depends_on:
-      - db
-    networks:
-      - database_network
-    env_file:
-      - environment/orders.env
-      - environment/db.env
-
-  db:
-    build:
-      context: postgres
-      dockerfile: Dockerfile
-    networks:
-      - database_network
-    volumes:
-      - ./environment:/var/lib/postgres/environment:ro
+  # orders:
+  #   build:
+  #     context: django
+  #     dockerfile: Dockerfile
+  #   command: gunicorn orders.wsgi:application --chdir orders/ --bind 0.0.0.0:8000
+  #   volumes:
+  #     - ./orders:/usr/src/app/
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - database_network
+  #   env_file:
+  #     - environment/orders.env
+  #     - environment/db.env
 
   web:
     build:
