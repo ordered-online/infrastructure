@@ -3,10 +3,7 @@ FROM python:3.7-alpine
 ENV DONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# install gunicorn and django
-RUN pip install gunicorn django
-
-# install psycopg2 dependencies
+# install psycopg2 dependencies needed for Alpine Linux
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 
 # set the working directory
