@@ -2,50 +2,56 @@ version: "3"
 services:
 
   db:
+    container_name: db
     build:
       context: postgres
       dockerfile: Dockerfile
     networks:
-      - database_network
+      - database
     volumes:
       - ./environment:/var/lib/postgres/environment:ro
 
   codes:
+    container_name: codes
     build:
       context: django
       dockerfile: Dockerfile
-    command: gunicorn codes.wsgi:application --chdir codes/ --bind 0.0.0.0:8000
+    command: gunicorn codes.wsgi:application --chdir /usr/src/app/codes/ --bind 0.0.0.0:8000
     volumes:
       - ./codes:/usr/src/app/
     depends_on:
       - db
     networks:
-      - database_network
+      - database
+      - api
     env_file:
       - environment/codes.env
       - environment/db.env
 
   verification:
+    container_name: verification
     build:
       context: django
       dockerfile: Dockerfile
-    command: gunicorn verification.wsgi:application --chdir verification/ --bind 0.0.0.0:8000
+    command: gunicorn verification.wsgi:application --chdir /usr/src/app/verification/ --bind 0.0.0.0:8000
     volumes:
       - ./verification:/usr/src/app/
     depends_on:
       - db
       - codes
     networks:
-      - database_network
+      - database
+      - api
     env_file:
       - environment/verification.env
       - environment/db.env
 
   locations:
+    container_name: locations
     build:
       context: django
       dockerfile: Dockerfile
-    command: gunicorn locations.wsgi:application --chdir locations/ --bind 0.0.0.0:8000
+    command: gunicorn locations.wsgi:application --chdir /usr/src/app/locations/ --bind 0.0.0.0:8000
     volumes:
       - ./locations:/usr/src/app/
     depends_on:
@@ -53,16 +59,18 @@ services:
       - codes
       - verification
     networks:
-      - database_network
+      - database
+      - api
     env_file:
       - environment/locations.env
       - environment/db.env
 
   products:
+    container_name: products
     build:
       context: django
       dockerfile: Dockerfile
-    command: gunicorn products.wsgi:application --chdir products/ --bind 0.0.0.0:8000
+    command: gunicorn products.wsgi:application --chdir /usr/src/app/products/ --bind 0.0.0.0:8000
     volumes:
       - ./products:/usr/src/app/
     depends_on:
@@ -71,7 +79,8 @@ services:
       - verification
       - locations
     networks:
-      - database_network
+      - database
+      - api
     env_file:
       - environment/products.env
       - environment/db.env
@@ -80,30 +89,33 @@ services:
   #   build:
   #     context: django
   #     dockerfile: Dockerfile
-  #   command: gunicorn orders.wsgi:application --chdir orders/ --bind 0.0.0.0:8000
+  #   command: daphne -b 0.0.0.0 -p 8000 orders.asgi:application
   #   volumes:
   #     - ./orders:/usr/src/app/
   #   depends_on:
   #     - db
   #   networks:
-  #     - database_network
+  #     - database
+  #     - api
   #   env_file:
   #     - environment/orders.env
   #     - environment/db.env
 
   web:
+    container_name: web
     build:
       context: nginx
       dockerfile: Dockerfile
     ports:
-        - 80:80
+        - 80:80 
     depends_on:
       - codes
       - locations
       - verification
       - products
-      - db
+    networks:
+      - api
 
 networks:
-  database_network:
-    driver: bridge
+  api:
+  database:
