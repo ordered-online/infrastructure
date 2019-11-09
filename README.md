@@ -15,27 +15,54 @@
 
 Clone this repo recursively
 
-```
+```bash
 $ git clone https://github.com/ordered-online/infrastructure --recursive
 ```
 
-Make sure, that Python 3 is installed. Install all requirements with the following command:
-On macOS, please run:
+Otherwise simply run
 
+```bash
+$ git submodule update --init --recursive
+```
+
+Start the application with docker-compose via 
+```
+$ docker-compose --project-name ordered-online -f docker-compose.yml up -d --build
+```
+
+---
+
+If you are using `macOS` and the installation of Python 3 fails, 
+because the python ssl extension throws an error,
+you have to set CFLAGS and LDFLAGS so that setup.py can find openssl headers. 
+You can do so by setting the following environment variables
 ```
 export CFLAGS="-I$(brew --prefix openssl)/include $CFLAGS"
 export LDFLAGS="-L$(brew --prefix openssl)/lib $LDFLAGS"
 ```
-(This is necessary to build the `psycopg2` library.)
 
-Make sure, that existing docker services are stopped.
+---
+
+To run the docker compose setup, execute
 ```
-$ docker-compose down -v
+$ docker-compose --project-name ordered-online -f docker-compose.yml up
 ```
-Run the server. Make sure, that docker has started.
+
+---
+
+Use the flag `-d` to run in detached mode so docker will run in the background.
 ```
-$ docker-compose -f docker-compose.yml up -d --build
+$ docker-compose --project-name ordered-online -f docker-compose.yml up -d
 ```
+This way it will not block the current shell.
+
+---
+
+Use the flag `--build` to rebuild all images specified via the docker-compose.yml
+```
+$ docker-compose --project-name ordered-online -f docker-compose.yml up --build
+```
+--- 
 View the logs with:
 ```
 $ docker-compose logs -f
