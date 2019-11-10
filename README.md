@@ -27,8 +27,11 @@ $ git submodule update --init --recursive
 
 Start the application with docker-compose via 
 ```
-$ docker-compose --project-name ordered-online -f docker-compose.yml up -d --build
+$ docker-compose --project-name ordered-online -f docker-compose.yml up
 ```
+
+Use the `--build` flag to rebuild all images or detach after build with `-d`.
+Note, that if detached, the logs are accessible via `docker-compose logs -f`.
 
 ---
 
@@ -39,31 +42,4 @@ You can do so by setting the following environment variables
 ```
 export CFLAGS="-I$(brew --prefix openssl)/include $CFLAGS"
 export LDFLAGS="-L$(brew --prefix openssl)/lib $LDFLAGS"
-```
-
----
-
-To run the docker compose setup, execute
-```
-$ docker-compose --project-name ordered-online -f docker-compose.yml up
-```
-
----
-
-Use the flag `-d` to run in detached mode so docker will run in the background.
-```
-$ docker-compose --project-name ordered-online -f docker-compose.yml up -d
-```
-This way it will not block the current shell.
-
----
-
-Use the flag `--build` to rebuild all images specified via the docker-compose.yml
-```
-$ docker-compose --project-name ordered-online -f docker-compose.yml up --build
-```
---- 
-View the logs with:
-```
-$ docker-compose logs -f
 ```
