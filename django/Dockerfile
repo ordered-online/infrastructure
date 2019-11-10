@@ -4,7 +4,7 @@ ENV DONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install psycopg2 dependencies needed for Alpine Linux
-RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev libffi-dev
 
 # set the working directory
 WORKDIR /usr/src/app

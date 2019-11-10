@@ -11,6 +11,14 @@ services:
     volumes:
       - ./environment:/var/lib/postgres/environment:ro
 
+  redis:
+    container_name: redis
+    image: redis:2.8
+    networks:
+      - websocket
+    expose:
+      - "6379"
+
   codes:
     container_name: codes
     build:
@@ -81,25 +89,32 @@ services:
     networks:
       - database
       - api
+      - websocket
     env_file:
       - environment/products.env
       - environment/db.env
 
-  # orders:
-  #   build:
-  #     context: django
-  #     dockerfile: Dockerfile
-  #   command: daphne -b 0.0.0.0 -p 8000 orders.asgi:application
-  #   volumes:
-  #     - ./orders:/usr/src/app/
-  #   depends_on:
-  #     - db
-  #   networks:
-  #     - database
-  #     - api
-  #   env_file:
-  #     - environment/orders.env
-  #     - environment/db.env
+  orders:
+    container_name: orders
+    build:
+      context: django
+      dockerfile: Dockerfile
+    command: daphne -u /tmp/daphne.sock -b 0.0.0.0 -p 8000 orders.asgi:application
+    volumes:
+      - ./orders/orders:/usr/src/app/
+    depends_on:
+      - db
+      - redis
+      - codes
+      - locations
+      - verification
+    networks:
+      - database
+      - api
+      - websocket
+    env_file:
+      - environment/orders.env
+      - environment/db.env
 
   web:
     container_name: web
@@ -119,3 +134,4 @@ services:
 networks:
   api:
   database:
+  websocket:
