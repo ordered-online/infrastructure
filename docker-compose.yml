@@ -1,6 +1,5 @@
-version: "3"
+version: '3'
 services:
-
   db:
     container_name: db
     build:
@@ -17,7 +16,7 @@ services:
     networks:
       - websocket
     expose:
-      - "6379"
+      - '6379'
 
   codes:
     container_name: codes
@@ -89,7 +88,6 @@ services:
     networks:
       - database
       - api
-      - websocket
     env_file:
       - environment/products.env
       - environment/db.env
@@ -116,22 +114,44 @@ services:
       - environment/orders.env
       - environment/db.env
 
+  apps:
+    container_name: apps
+    build:
+      context: node
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    volumes:
+      - ./apps:/usr/src/app/
+    depends_on:
+      - codes
+      - locations
+      - verification
+      - products
+      - orders
+    networks:
+      - apps
+
   web:
     container_name: web
     build:
       context: nginx
       dockerfile: Dockerfile
     ports:
-        - 80:80 
+      - 80:80
     depends_on:
       - codes
       - locations
       - verification
       - products
+      - orders
+      - apps
     networks:
       - api
+      - apps
 
 networks:
   api:
   database:
   websocket:
+  apps:
