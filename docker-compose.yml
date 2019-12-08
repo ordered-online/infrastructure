@@ -12,7 +12,9 @@ services:
 
   redis:
     container_name: redis
-    image: redis:2.8
+    build:
+      context: redis
+      dockerfile: Dockerfile
     networks:
       - websocket
     expose:
