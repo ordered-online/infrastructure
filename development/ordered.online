@@ -1,0 +1,104 @@
+upstream verification_server {
+    server 127.0.0.1:8001;
+}
+
+upstream locations_server {
+    server 127.0.0.1:8002;
+}
+
+upstream products_server {
+    server 127.0.0.1:8003;
+}
+
+upstream codes_server {
+    server 127.0.0.1:8004;
+}
+
+upstream orders_server {
+    server 127.0.0.1:8005;
+}
+
+server {
+
+    listen      8000 default_server;
+    listen [::]:8000 default_server;
+    server_name localhost ordered.online www.ordered.online;
+
+    add_header 'Access-Control-Allow-Origin' '*';
+    add_header 'Access-Control-Allow-Credentials' 'true';
+    add_header 'Access-Control-Allow-Methods' 'GET, POST';
+    # add_header 'Access-Control-Allow-Headers' 'Access-Control-Allow-Orgin,XMLHttpRequest,Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With';
+    add_header 'Access-Control-Allow-Headers' 'Accept,User-Agent,Keep-Alive,Cache-Control,Content-Type';
+    add_header 'Access-Control-Max-Age' 1728000;
+
+    # Forward the according urls to the respective service
+
+    location /codes/ {
+        proxy_pass http://codes_server/codes/;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+        proxy_set_header   X-NginX-Proxy true;
+    }
+
+    location /verification/ {
+        proxy_pass http://verification_server/verification/;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+        proxy_set_header   X-NginX-Proxy true;
+    }
+
+    location /locations/ {
+        proxy_pass http://locations_server/locations/;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+        proxy_set_header   X-NginX-Proxy true;
+    }
+
+    location /products/ {
+        proxy_pass http://products_server/products/;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+        proxy_set_header   X-NginX-Proxy true;
+    }
+
+    # Forward connections prefixed with '/ws/session/' to the order service and upgrade the connection 
+    location /ws/session/ {
+        proxy_pass http://orders_server/ws/session/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+        proxy_set_header   X-NginX-Proxy true;
+    }
+
+    location /orders/ {
+        proxy_pass http://orders_server/orders/;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+        proxy_set_header   X-NginX-Proxy true;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
