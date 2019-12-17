@@ -1,0 +1,12 @@
+git:
+  submodules: false
+
+branches:
+  only:
+    - master
+
+jobs:
+  include:
+    - stage: 'Submodule'
+      name: 'Update Submodule'
+      script: ./update-submodule.sh
