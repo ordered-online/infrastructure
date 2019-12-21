@@ -107,7 +107,13 @@ $ sudo ln -s $PWD/development/ordered.online /etc/nginx/sites-enabled/ordered.on
 Before you start the local web server make sure to migrate every microservice. You can do so by running the following command:
 
 ```bash
-$ find -L /var/www -type f -name "manage.py" -exec python3 {} migrate \; 
+$ find -L /var/www -type f -name "manage.py" -exec python3 {} migrate \;
+```
+
+If you previously used the development setup and thus have create local sqlite3 databases, you can delete all of them to reset the application, with the following command:
+
+```bash
+$ find -L /var/www -type f -name "*.sqlite3" -exec rm -rf {} + 
 ```
 
 If you followed all the steps above, you are now able to run the whole api via a local web server by simply running:
