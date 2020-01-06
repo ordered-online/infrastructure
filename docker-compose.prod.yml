@@ -1,0 +1,55 @@
+version: '3'
+services:
+  db:
+    container_name: db
+    image: ordered-online:db
+    restart: always
+    build:
+      context: .
+      dockerfile: postgres/Dockerfile
+      args:
+        ENV_DIR: ./environment
+    networks:
+      - database
+
+  redis:
+    restart: always
+
+  codes:
+    restart: always
+    env_file:
+      - environment/codes.env
+      - environment/db.env
+
+  verification:
+    restart: always
+    env_file:
+      - environment/verification.env
+      - environment/db.env
+
+  locations:
+    restart: always
+    env_file:
+      - environment/locations.env
+      - environment/db.env
+
+  products:
+    restart: always
+    env_file:
+      - environment/products.env
+      - environment/db.env
+
+  orders:
+    restart: always
+    env_file:
+      - environment/orders.env
+      - environment/db.env
+
+  # app:
+  #   restart: always
+
+  # manager:
+  #   restart: always
+
+  api:
+    restart: always

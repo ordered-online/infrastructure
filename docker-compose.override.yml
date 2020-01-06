@@ -1,0 +1,27 @@
+version: '3'
+services:
+  codes:
+    volumes:
+      - ./codes:/usr/src/app/
+
+  verification:
+    volumes:
+      - ./verification:/usr/src/app/
+
+  locations:
+    volumes:
+      - ./locations:/usr/src/app/
+
+  products:
+    volumes:
+      - ./products:/usr/src/app/
+
+  orders:
+    volumes:
+      - ./orders/orders:/usr/src/app/
+  # app:
+  #   volumes:
+  #     - ./apps/packages/app:/usr/src/app/packages/app/
+  # manager:
+  #   volumes:
+  #     - ./apps/packages/manager:/usr/src/app/packages/manager/

@@ -1,144 +1,103 @@
 version: '3'
 services:
-  db:
-    container_name: db
-    build:
-      context: postgres
-      dockerfile: Dockerfile
-    networks:
-      - database
-    volumes:
-      - ./environment:/var/lib/postgres/environment:ro
-
   redis:
     container_name: redis
-    build:
-      context: redis
-      dockerfile: Dockerfile
+    image: redis:5.0.7-alpine3.11
     networks:
       - websocket
-    expose:
-      - '6379'
 
   codes:
     container_name: codes
+    image: ordered-online:codes
     build:
-      context: django
-      dockerfile: Dockerfile
-    command: gunicorn codes.wsgi:application --chdir /usr/src/app/codes/ --bind 0.0.0.0:8000
-    volumes:
-      - ./codes:/usr/src/app/
-    depends_on:
-      - db
+      context: .
+      dockerfile: django/Dockerfile
+      args:
+        SERVICE: codes
     networks:
       - database
       - api
-    env_file:
-      - environment/codes.env
-      - environment/db.env
 
   verification:
     container_name: verification
+    image: ordered-online:verification
     build:
-      context: django
-      dockerfile: Dockerfile
-    command: gunicorn verification.wsgi:application --chdir /usr/src/app/verification/ --bind 0.0.0.0:8000
-    volumes:
-      - ./verification:/usr/src/app/
-    depends_on:
-      - db
-      - codes
+      context: .
+      dockerfile: django/Dockerfile
+      args:
+        SERVICE: verification
     networks:
       - database
       - api
-    env_file:
-      - environment/verification.env
-      - environment/db.env
 
   locations:
     container_name: locations
+    image: ordered-online:locations
     build:
-      context: django
-      dockerfile: Dockerfile
-    command: gunicorn locations.wsgi:application --chdir /usr/src/app/locations/ --bind 0.0.0.0:8000
-    volumes:
-      - ./locations:/usr/src/app/
-    depends_on:
-      - db
-      - codes
-      - verification
+      context: .
+      dockerfile: django/Dockerfile
+      args:
+        SERVICE: locations
     networks:
       - database
       - api
-    env_file:
-      - environment/locations.env
-      - environment/db.env
 
   products:
     container_name: products
+    image: ordered-online:products
     build:
-      context: django
-      dockerfile: Dockerfile
-    command: gunicorn products.wsgi:application --chdir /usr/src/app/products/ --bind 0.0.0.0:8000
-    volumes:
-      - ./products:/usr/src/app/
-    depends_on:
-      - db
-      - codes
-      - verification
-      - locations
+      context: .
+      dockerfile: django/Dockerfile
+      args:
+        SERVICE: products
     networks:
       - database
       - api
-    env_file:
-      - environment/products.env
-      - environment/db.env
 
   orders:
     container_name: orders
+    image: ordered-online:orders
     build:
-      context: django
-      dockerfile: Dockerfile
-    command: daphne -u /tmp/daphne.sock -b 0.0.0.0 -p 8000 orders.asgi:application
-    volumes:
-      - ./orders/orders:/usr/src/app/
-    depends_on:
-      - db
-      - redis
-      - codes
-      - locations
-      - verification
+      context: .
+      dockerfile: django/Dockerfile
+      args:
+        SERVICE: orders
+    command: daphne -b 0.0.0.0 -p 8000 orders.asgi:application
     networks:
       - database
       - api
       - websocket
-    env_file:
-      - environment/orders.env
-      - environment/db.env
 
-  apps:
-    container_name: apps
-    build:
-      context: node
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: development
-    volumes:
-      - ./apps:/usr/src/app/
-    depends_on:
-      - codes
-      - locations
-      - verification
-      - products
-      - orders
-    networks:
-      - apps
+  # app:
+  #   container_name: app
+  #   image: ordered-online:app
+  #   build:
+  #     context: .
+  #     dockerfile: node/Dockerfile
+  #     args:
+  #       SERVICE: app
+  #       NODE_ENV: development
+  #   networks:
+  #     - apps
 
-  web:
-    container_name: web
+  # manager:
+  #   container_name: manager
+  #   image: ordered-online:manager
+  #   build:
+  #     context: .
+  #     dockerfile: node/Dockerfile
+  #     args:
+  #       SERVICE: manager
+  #       NODE_ENV: development
+  #   networks:
+  #     - apps
+
+  api:
+    container_name: api
+    image: ordered-online:api
     build:
-      context: nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: nginx/Dockerfile
     ports:
       - 80:80
     depends_on:
@@ -147,7 +106,8 @@ services:
       - verification
       - products
       - orders
-      - apps
+      # - app
+      # - manager
     networks:
       - api
       - apps
