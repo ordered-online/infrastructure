@@ -2,19 +2,19 @@ version: '3'
 services:
   codes:
     volumes:
-      - ./codes:/usr/src/app/
+      - ./codes/codes:/usr/src/app/
 
   verification:
     volumes:
-      - ./verification:/usr/src/app/
+      - ./verification/verification:/usr/src/app/
 
   locations:
     volumes:
-      - ./locations:/usr/src/app/
+      - ./locations/locations:/usr/src/app/
 
   products:
     volumes:
-      - ./products:/usr/src/app/
+      - ./products/products:/usr/src/app/
 
   orders:
     volumes:
