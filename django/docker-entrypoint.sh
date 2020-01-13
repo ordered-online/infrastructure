@@ -12,7 +12,6 @@ if ! [ -z "$SQL_HOST" ] && [ -z "$SQL_PORT" ]; then
     echo "Postgres started"
 fi
 
-python "/usr/src/app/manage.py" flush --no-input
 python "/usr/src/app/manage.py" migrate
 
 exec "$@"
