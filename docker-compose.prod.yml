@@ -51,6 +51,7 @@ services:
   manager:
     build:
       args:
+        API_URL: http://ordered.online
         NODE_ENV: production
     restart: always
 

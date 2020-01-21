@@ -9,9 +9,6 @@ ENV NODE_ENV=${NODE_ENV}
 # set the working directory
 WORKDIR /usr/src/app
 
-# Copy application into working directory
-COPY apps /usr/src/app/
-
 # copy the entrypoint script for the image
 COPY node/docker-entrypoint.sh /usr/local/bin/
 
@@ -23,6 +20,9 @@ ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 RUN set -eux \
   && yarn global add serve expo-cli
+
+# Copy application into working directory
+COPY apps /usr/src/app/
 
 RUN set -eux \
   && yarn --cwd /usr/src/app install \
