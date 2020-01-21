@@ -54,13 +54,7 @@ export LDFLAGS="-L$(brew --prefix openssl)/lib $LDFLAGS"
 
 ## Development
 
-For development we provide two different solutions, the recommended way if you are not familiar with docker is to use the
-[development guide](https://github.com/ordered-online/infrastructure/tree/master/development) provided with this repository.
-It will guide you to setup up a local development environment using `nginx` and `supervisor` on your local machine.
-Additionally it comes with a `start.sh` script that will allow you to start your local development environment with executing
-a single bash script.
-
-Alternatively you can develop using our docker setup. With that, the submodule directories will get mounted as volumes into the
+Use our docker setup for developing. With that, the submodule directories will get mounted as volumes into the
 service containers. To do so, simple use the following command to start the application with docker-compose in development environment:
 
 ```
