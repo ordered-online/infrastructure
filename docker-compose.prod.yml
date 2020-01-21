@@ -48,8 +48,11 @@ services:
   # app:
   #   restart: always
 
-  # manager:
-  #   restart: always
+  manager:
+    build:
+      args:
+        NODE_ENV: production
+    restart: always
 
   api:
     restart: always

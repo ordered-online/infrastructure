@@ -22,6 +22,7 @@ services:
   # app:
   #   volumes:
   #     - ./apps/packages/app:/usr/src/app/packages/app/
-  # manager:
-  #   volumes:
-  #     - ./apps/packages/manager:/usr/src/app/packages/manager/
+
+  manager:
+    volumes:
+      - ./apps/packages/manager:/usr/src/app/packages/manager/

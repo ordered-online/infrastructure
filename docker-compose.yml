@@ -80,17 +80,17 @@ services:
   #   networks:
   #     - apps
 
-  # manager:
-  #   container_name: manager
-  #   image: ordered-online:manager
-  #   build:
-  #     context: .
-  #     dockerfile: node/Dockerfile
-  #     args:
-  #       SERVICE: manager
-  #       NODE_ENV: development
-  #   networks:
-  #     - apps
+  manager:
+    container_name: manager
+    image: ordered-online:manager
+    build:
+      context: .
+      dockerfile: node/Dockerfile
+      args:
+        SERVICE: manager
+        NODE_ENV: development
+    networks:
+      - apps
 
   api:
     container_name: api
@@ -107,7 +107,7 @@ services:
       - products
       - orders
       # - app
-      # - manager
+      - manager
     networks:
       - api
       - apps
