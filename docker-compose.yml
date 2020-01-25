@@ -68,17 +68,17 @@ services:
       - api
       - websocket
 
-  # app:
-  #   container_name: app
-  #   image: ordered-online:app
-  #   build:
-  #     context: .
-  #     dockerfile: node/Dockerfile
-  #     args:
-  #       SERVICE: app
-  #       NODE_ENV: development
-  #   networks:
-  #     - apps
+  app:
+    container_name: app
+    image: ordered-online:app
+    build:
+      context: .
+      dockerfile: node/Dockerfile
+      args:
+        SERVICE: app
+        NODE_ENV: development
+    networks:
+      - apps
 
   manager:
     container_name: manager
@@ -106,7 +106,7 @@ services:
       - verification
       - products
       - orders
-      # - app
+      - app
       - manager
     networks:
       - api

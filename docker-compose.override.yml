@@ -19,9 +19,10 @@ services:
   orders:
     volumes:
       - ./orders/orders:/usr/src/app/
-  # app:
-  #   volumes:
-  #     - ./apps/packages/app:/usr/src/app/packages/app/
+
+  app:
+    volumes:
+      - ./apps/packages/app:/usr/src/app/packages/app/
 
   manager:
     volumes:

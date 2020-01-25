@@ -1,6 +1,19 @@
 version: '3'
 services:
+  visualizer:
+    image: dockersamples/visualizer
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      ports:
+      - "8080:8080"
+
   db:
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
     container_name: db
     image: ordered-online:db
     restart: always
@@ -13,45 +26,81 @@ services:
       - database
 
   redis:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     restart: always
 
   codes:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     restart: always
     env_file:
       - environment/codes.env
       - environment/db.env
 
   verification:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     restart: always
     env_file:
       - environment/verification.env
       - environment/db.env
 
   locations:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     restart: always
     env_file:
       - environment/locations.env
       - environment/db.env
 
   products:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     restart: always
     env_file:
       - environment/products.env
       - environment/db.env
 
   orders:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     restart: always
     env_file:
       - environment/orders.env
       - environment/db.env
 
-  # app:
-  #   restart: always
-
-  manager:
+  app:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     build:
       args:
-        API_URL: http://ordered.online
+        API_URL: ordered.online
+        NODE_ENV: production
+    restart: always
+
+  manager:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    build:
+      args:
+        API_URL: ordered.online
         NODE_ENV: production
     restart: always
 

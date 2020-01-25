@@ -77,3 +77,66 @@ Start the application with docker-compose in production environment via
 ```
 $ docker-compose --project-name ordered-online -f docker-compose.yml -f docker-compose.prod.yml up
 ```
+
+## Deployment with Docker Swarm
+
+Make sure you don't have a previous instance of the stack by removing the stack
+
+```bash
+$ docker stack rm ordered-online
+```
+
+Inspect your current worker node with:
+
+```bash
+$ docker node inspect self --pretty
+```
+
+Then remove your current node from the swarm cluster via:
+
+```bash
+$ docker swarm leave
+```
+
+If you were a manager node previously, you will have to do `$ docker swarm leave --force` to force the operation.
+
+---
+
+For docker swarm you will have to build all the images for the services in advance:
+
+```bash
+$ docker-compose build
+```
+
+Because a swarm consists of multiple Docker Engines, a registry is required to distribute images to all of them.
+You can use the Docker Hub or maintain your own. Here’s how to create a throwaway registry, which you can discard afterward.
+
+```bash
+$ docker service create --name registry --publish published=5000,target=5000 registry:2
+```
+
+Push all of your images to the registry with:
+
+```bash
+$ docker-compose push
+```
+
+---
+
+Initialize a new swarm manager node via:
+
+```bash
+$ docker swarm init
+```
+
+And deploy our stack using:
+
+```bash
+$ docker stack deploy --compose-file docker-compose.yml -c docker-compose.prod.yml ordered-online
+```
+
+You can view your swarm node with the visualizer image provided by docker. Just start the container via:
+
+```bash
+$ docker run -it -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock dockersamples/visualizer
+```
