@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   redis:
     container_name: redis
@@ -74,6 +74,7 @@ services:
     build:
       context: .
       dockerfile: node/Dockerfile
+      target: builder
       args:
         SERVICE: app
         NODE_ENV: development
@@ -86,6 +87,7 @@ services:
     build:
       context: .
       dockerfile: node/Dockerfile
+      target: builder
       args:
         SERVICE: manager
         NODE_ENV: development

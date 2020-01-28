@@ -1,30 +1,35 @@
-FROM node:12.14-alpine3.11
-
+FROM node:12.14-alpine3.11 AS base
 ARG SERVICE="app"
-ARG NODE_ENV=development
-
 ENV SERVICE=${SERVICE}
+ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
 
-RUN set -eux \
-  && yarn global add \
-  serve \
-  expo-cli
-    
-WORKDIR /usr/src/app
+FROM base AS builder
 
-# set the working directory
-# Copy application into working directory
-COPY apps /usr/src/app/
+RUN set -eux && yarn global add expo-cli
 
-RUN set -eux; yarn --cwd /usr/src/app install 
+COPY apps /usr/src/apps
 
-RUN set -eux; yarn --cwd /usr/src/app build:api:remote
+WORKDIR /usr/src/apps
 
-RUN set -eux; yarn --cwd /usr/src/app build:components
+RUN yarn install 
 
-RUN set -eux; expo-cli build:web /usr/src/app/packages/${SERVICE}
+RUN yarn build:api:remote
 
-CMD ["/bin/sh", "-c", "serve -s /usr/src/app/packages/${SERVICE}/web-build"]
+RUN yarn build:components
+
+RUN expo-cli build:web /usr/src/apps/packages/${SERVICE}
+
+CMD ["/bin/sh", "-c", "yarn run web:${SERVICE}"]
+
+EXPOSE 19006
+
+FROM base as production
+
+RUN set -eux && yarn global add serve
+
+RUN COPY --from=builder /usr/src/apps/packages/${SERVICE}/web-build /usr/src/app
+
+CMD ["/bin/sh", "-c", "serve -s /usr/src/app"]
 
 EXPOSE 5000

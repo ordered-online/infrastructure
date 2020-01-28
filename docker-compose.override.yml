@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   codes:
     volumes:
@@ -22,8 +22,8 @@ services:
 
   app:
     volumes:
-      - ./apps/packages/app:/usr/src/app/packages/app/
+      - ./apps/packages/app:/usr/src/apps/packages/app/
 
   manager:
     volumes:
-      - ./apps/packages/manager:/usr/src/app/packages/manager/
+      - ./apps/packages/manager:/usr/src/apps/packages/manager/
